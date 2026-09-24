@@ -36,10 +36,10 @@ export const AskAtlasDock: React.FC<AskAtlasDockProps> = ({
   const [history, setHistory] = useState<{ query: string; response: AIAtlasQueryResponse }[]>([]);
 
   const samplePrompts = [
-    'Show major rice-producing areas of Odisha',
-    'What is the annual rainfall and climate of Ganjam?',
-    'What festivals occur in Odisha?',
-    'What natural hazards affect Ganjam and coastal Odisha?'
+    'Compare the geography and climate of California and Japan',
+    'What are the key crops and rainfall patterns across India and Odisha?',
+    'What is the elevation and geology of Mount Everest?',
+    'Show natural hazards and cyclone vulnerability along coastal zones'
   ];
 
   const handleAsk = async (textToAsk?: string) => {
@@ -72,7 +72,7 @@ export const AskAtlasDock: React.FC<AskAtlasDockProps> = ({
     return (
       <button
         onClick={() => setIsOpen(true)}
-        className="fixed bottom-6 right-6 z-30 flex items-center gap-2.5 px-4 py-3 bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 text-slate-950 font-semibold text-xs rounded-full shadow-2xl transition-all transform hover:scale-105 pointer-events-auto border border-amber-400/40"
+        className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-[1600] map-floating-overlay flex items-center gap-2 px-3.5 py-2.5 sm:px-4 sm:py-3 bg-gradient-to-r from-amber-600 to-amber-700 hover:from-amber-500 hover:to-amber-600 text-slate-950 font-semibold text-xs rounded-full shadow-2xl transition-all transform hover:scale-105 pointer-events-auto border border-amber-400/40"
       >
         <Sparkles className="w-4 h-4 text-slate-950" />
         <span className="font-serif tracking-wider font-bold">Ask Atlas AI</span>
@@ -81,7 +81,7 @@ export const AskAtlasDock: React.FC<AskAtlasDockProps> = ({
   }
 
   return (
-    <div className="fixed bottom-6 right-6 z-30 w-96 sm:w-[440px] max-h-[580px] bg-slate-900/98 backdrop-blur-xl border border-slate-800 rounded-xl shadow-2xl flex flex-col overflow-hidden pointer-events-auto">
+    <div className="fixed inset-x-3 bottom-3 sm:inset-x-auto sm:bottom-6 sm:right-6 z-[1600] map-floating-overlay sm:w-[440px] max-h-[82vh] sm:max-h-[580px] bg-slate-900/98 backdrop-blur-xl border border-slate-800 rounded-xl shadow-2xl flex flex-col overflow-hidden pointer-events-auto">
       {/* Header */}
       <div className="px-4 py-3 border-b border-slate-800 bg-slate-950/80 flex items-center justify-between">
         <div className="flex items-center gap-2">

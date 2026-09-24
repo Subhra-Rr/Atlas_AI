@@ -180,6 +180,92 @@ export const OFFICIAL_SOURCES: Record<string, SourceMetadata> = {
 };
 
 export const SEED_ENTITIES: GeographicEntity[] = [
+  // 0. Continents
+  {
+    id: 'asia',
+    name: 'Asia',
+    nativeName: 'Asia',
+    type: 'continent',
+    coordinates: [34.0479, 100.6197],
+    bbox: [1.0, 26.0, 77.0, 169.0],
+    areaKm2: 44579000,
+    population: 4750000000,
+    description: 'Earth\'s largest and most populous continent, containing 60% of the world\'s current human population. Features extreme physical geography from the Mariana Trench and Dead Sea to Mount Everest.',
+    geometryType: 'Point',
+    sources: OFFICIAL_SOURCES.USGS,
+    updatedAt: '2025-01-01T00:00:00Z'
+  },
+  {
+    id: 'europe',
+    name: 'Europe',
+    nativeName: 'Europe',
+    type: 'continent',
+    coordinates: [54.5260, 15.2551],
+    bbox: [36.0, -10.0, 71.0, 40.0],
+    areaKm2: 10180000,
+    population: 746400000,
+    description: 'Western peninsula of Eurasia bounded by the Arctic Ocean to the north, Atlantic to the west, Mediterranean to the south, and Ural Mountains to the east. Highly developed river transport systems and temperate biomes.',
+    geometryType: 'Point',
+    sources: OFFICIAL_SOURCES.USGS,
+    updatedAt: '2025-01-01T00:00:00Z'
+  },
+  {
+    id: 'africa',
+    name: 'Africa',
+    nativeName: 'Africa',
+    type: 'continent',
+    coordinates: [1.6508, 17.6791],
+    bbox: [-35.0, -18.0, 37.5, 51.5],
+    areaKm2: 30370000,
+    population: 1400000000,
+    description: 'Second-largest and second-most-populous continent, straddling the equator and hosting vast ecological diversity from the Sahara Desert to the Congo basin rainforests and the Great Rift Valley.',
+    geometryType: 'Point',
+    sources: OFFICIAL_SOURCES.USGS,
+    updatedAt: '2025-01-01T00:00:00Z'
+  },
+  {
+    id: 'north_america',
+    name: 'North America',
+    nativeName: 'North America',
+    type: 'continent',
+    coordinates: [54.5260, -105.2551],
+    bbox: [7.0, -168.0, 83.0, -52.0],
+    areaKm2: 24709000,
+    population: 592000000,
+    description: 'Northern continent bordered by the Arctic Ocean to the north, Pacific Ocean to the west, Atlantic Ocean to the east, and Caribbean Sea to the southeast. Includes Canada, the United States, and Mexico.',
+    geometryType: 'Point',
+    sources: OFFICIAL_SOURCES.USGS,
+    updatedAt: '2025-01-01T00:00:00Z'
+  },
+  {
+    id: 'south_america',
+    name: 'South America',
+    nativeName: 'América del Sur',
+    type: 'continent',
+    coordinates: [-8.7832, -55.4915],
+    bbox: [-56.0, -81.5, 13.0, -34.5],
+    areaKm2: 17840000,
+    population: 430000000,
+    description: 'Southern continent situated in the Western Hemisphere, home to the Amazon River basin (largest drainage system in the world), the Andes mountain chain, and the Atacama Desert.',
+    geometryType: 'Point',
+    sources: OFFICIAL_SOURCES.USGS,
+    updatedAt: '2025-01-01T00:00:00Z'
+  },
+  {
+    id: 'oceania',
+    name: 'Oceania & Australia',
+    nativeName: 'Oceania',
+    type: 'continent',
+    coordinates: [-22.7359, 140.0188],
+    bbox: [-47.0, 110.0, 0.0, 180.0],
+    areaKm2: 8525989,
+    population: 44000000,
+    description: 'Geographic region encompassing Australasia, Melanesia, Micronesia, and Polynesia. Features unique biodiversity, the Great Barrier Reef, and diverse Pacific island ecosystems.',
+    geometryType: 'Point',
+    sources: OFFICIAL_SOURCES.USGS,
+    updatedAt: '2025-01-01T00:00:00Z'
+  },
+
   // 1. Countries
   {
     id: 'india',
@@ -281,8 +367,231 @@ export const SEED_ENTITIES: GeographicEntity[] = [
     sources: OFFICIAL_SOURCES.USGS,
     updatedAt: '2025-01-01T00:00:00Z'
   },
+  {
+    id: 'uk',
+    name: 'United Kingdom',
+    nativeName: 'United Kingdom',
+    type: 'country',
+    coordinates: [55.3781, -3.4360],
+    bbox: [49.9, -8.6, 60.9, 1.8],
+    areaKm2: 242495,
+    population: 67738000,
+    capital: 'London',
+    description: 'Island country in Northwestern Europe comprising England, Scotland, Wales, and Northern Ireland. Temperate maritime climate with Atlantic low-pressure systems and rolling countryside.',
+    geometryType: 'Polygon',
+    geojson: {
+      type: 'Polygon',
+      coordinates: [
+        [
+          [-5.5, 50.0], [1.5, 51.2], [1.7, 52.8], [-0.5, 54.5],
+          [-2.0, 58.5], [-5.0, 58.6], [-5.0, 55.0], [-3.5, 51.5], [-5.5, 50.0]
+        ]
+      ]
+    },
+    sources: OFFICIAL_SOURCES.USGS,
+    updatedAt: '2025-01-01T00:00:00Z'
+  },
+  {
+    id: 'france',
+    name: 'France',
+    nativeName: 'République française',
+    type: 'country',
+    coordinates: [46.2276, 2.2137],
+    bbox: [41.3, -5.1, 51.1, 9.6],
+    areaKm2: 643801,
+    population: 68000000,
+    capital: 'Paris',
+    description: 'Western European nation spanning the Mediterranean Sea to the English Channel, Atlantic Ocean, and the Rhine. World leader in viticulture, agricultural output, and cultural heritage.',
+    geometryType: 'Polygon',
+    geojson: {
+      type: 'Polygon',
+      coordinates: [
+        [
+          [-4.5, 48.5], [2.5, 51.0], [7.5, 49.0], [7.0, 43.5],
+          [3.0, 42.5], [-1.5, 43.5], [-1.0, 46.0], [-4.5, 48.5]
+        ]
+      ]
+    },
+    sources: OFFICIAL_SOURCES.USGS,
+    updatedAt: '2025-01-01T00:00:00Z'
+  },
+  {
+    id: 'brazil',
+    name: 'Brazil',
+    nativeName: 'Brasil',
+    type: 'country',
+    coordinates: [-14.2350, -51.9253],
+    bbox: [-33.75, -73.98, 5.27, -34.79],
+    areaKm2: 8515767,
+    population: 215300000,
+    capital: 'Brasília',
+    description: 'Largest country in South America and Latin America, encompassing 60% of the Amazon rainforest, the Cerrado biome, Pantanal wetlands, and the fertile agricultural highlands.',
+    geometryType: 'Polygon',
+    geojson: {
+      type: 'Polygon',
+      coordinates: [
+        [
+          [-60.0, 5.0], [-50.0, 1.0], [-35.0, -5.0], [-38.0, -18.0],
+          [-48.0, -28.0], [-53.0, -33.5], [-58.0, -28.0], [-60.0, -20.0],
+          [-73.0, -8.0], [-68.0, 2.0], [-60.0, 5.0]
+        ]
+      ]
+    },
+    sources: OFFICIAL_SOURCES.USGS,
+    updatedAt: '2025-01-01T00:00:00Z'
+  },
+  {
+    id: 'australia',
+    name: 'Australia',
+    nativeName: 'Australia',
+    type: 'country',
+    coordinates: [-25.2744, 133.7751],
+    bbox: [-43.6, 113.3, -10.6, 153.6],
+    areaKm2: 7692024,
+    population: 26000000,
+    capital: 'Canberra',
+    description: 'Continent-country in Oceania featuring the arid Outback, Great Dividing Range, fertile southeastern basins, and the world\'s largest coral reef ecosystem (Great Barrier Reef).',
+    geometryType: 'Polygon',
+    geojson: {
+      type: 'Polygon',
+      coordinates: [
+        [
+          [114.0, -22.0], [130.0, -12.0], [142.0, -10.8], [153.0, -28.0],
+          [150.0, -37.5], [140.0, -38.0], [129.0, -32.0], [115.0, -34.0], [114.0, -22.0]
+        ]
+      ]
+    },
+    sources: OFFICIAL_SOURCES.USGS,
+    updatedAt: '2025-01-01T00:00:00Z'
+  },
+  {
+    id: 'canada',
+    name: 'Canada',
+    nativeName: 'Canada',
+    type: 'country',
+    coordinates: [56.1304, -106.3468],
+    bbox: [41.7, -141.0, 83.1, -52.6],
+    areaKm2: 9984670,
+    population: 40000000,
+    capital: 'Ottawa',
+    description: 'Second-largest country by land area in the world, spanning the Pacific, Atlantic, and Arctic oceans. Contains 20% of the world\'s freshwater reserves and the vast Boreal forest belt.',
+    geometryType: 'Polygon',
+    geojson: {
+      type: 'Polygon',
+      coordinates: [
+        [
+          [-141.0, 69.0], [-130.0, 54.0], [-123.0, 49.0], [-95.0, 49.0],
+          [-79.0, 42.0], [-64.0, 45.0], [-55.0, 52.0], [-65.0, 60.0],
+          [-95.0, 70.0], [-141.0, 69.0]
+        ]
+      ]
+    },
+    sources: OFFICIAL_SOURCES.USGS,
+    updatedAt: '2025-01-01T00:00:00Z'
+  },
+  {
+    id: 'china',
+    name: 'China',
+    nativeName: '中国 (Zhōngguó)',
+    type: 'country',
+    coordinates: [35.8617, 104.1954],
+    bbox: [18.2, 73.5, 53.5, 134.7],
+    areaKm2: 9596961,
+    population: 1412000000,
+    capital: 'Beijing',
+    description: 'East Asian civilization and nation with diverse geography from the Tibetan Plateau ("Roof of the World") and Gobi Desert to the fertile Yangtze and Yellow river plains.',
+    geometryType: 'Polygon',
+    geojson: {
+      type: 'Polygon',
+      coordinates: [
+        [
+          [75.0, 39.0], [90.0, 48.0], [120.0, 53.0], [131.0, 45.0],
+          [121.0, 31.0], [114.0, 22.0], [108.0, 21.5], [100.0, 21.5],
+          [92.0, 28.0], [80.0, 35.0], [75.0, 39.0]
+        ]
+      ]
+    },
+    sources: OFFICIAL_SOURCES.USGS,
+    updatedAt: '2025-01-01T00:00:00Z'
+  },
+  {
+    id: 'egypt',
+    name: 'Egypt',
+    nativeName: 'مصر (Miṣr)',
+    type: 'country',
+    coordinates: [26.8206, 30.8025],
+    bbox: [22.0, 25.0, 31.7, 36.9],
+    areaKm2: 1002450,
+    population: 109000000,
+    capital: 'Cairo',
+    description: 'Transcontinental nation in Northeast Africa and Sinai connecting Africa and Asia. Centers on the fertile Nile River valley surrounded by the Eastern and Western Deserts.',
+    geometryType: 'Polygon',
+    geojson: {
+      type: 'Polygon',
+      coordinates: [
+        [
+          [25.0, 31.5], [31.5, 31.5], [34.0, 29.5], [36.9, 22.0],
+          [25.0, 22.0], [25.0, 31.5]
+        ]
+      ]
+    },
+    sources: OFFICIAL_SOURCES.USGS,
+    updatedAt: '2025-01-01T00:00:00Z'
+  },
 
   // 2. States / Provinces
+  {
+    id: 'california',
+    name: 'California',
+    nativeName: 'California',
+    type: 'state',
+    parentId: 'usa',
+    parentName: 'United States',
+    coordinates: [36.7783, -119.4179],
+    bbox: [32.5, -124.4, 42.0, -114.1],
+    areaKm2: 423970,
+    population: 39000000,
+    capital: 'Sacramento',
+    description: 'Pacific coast state of the USA featuring the Sierra Nevada mountains, Central Valley agricultural heartland, Mojave Desert, and Redwood coastal temperate rainforests.',
+    geometryType: 'Polygon',
+    geojson: {
+      type: 'Polygon',
+      coordinates: [
+        [
+          [-124.2, 42.0], [-120.0, 42.0], [-120.0, 39.0], [-114.6, 35.0],
+          [-114.6, 32.7], [-117.1, 32.5], [-120.5, 34.5], [-124.2, 40.0], [-124.2, 42.0]
+        ]
+      ]
+    },
+    sources: OFFICIAL_SOURCES.USGS,
+    updatedAt: '2025-01-01T00:00:00Z'
+  },
+  {
+    id: 'maharashtra',
+    name: 'Maharashtra',
+    nativeName: 'महाराष्ट्र (Mahārāṣṭra)',
+    type: 'state',
+    parentId: 'india',
+    parentName: 'India',
+    coordinates: [19.7515, 75.7139],
+    bbox: [15.6, 72.6, 22.0, 80.9],
+    areaKm2: 307713,
+    population: 126000000,
+    capital: 'Mumbai',
+    description: 'Western and central peninsular state of India occupying the Deccan Plateau and Western Ghats (Sahyadri). India\'s leading economic state and financial engine.',
+    geometryType: 'Polygon',
+    geojson: {
+      type: 'Polygon',
+      coordinates: [
+        [
+          [72.8, 19.0], [73.5, 21.0], [78.5, 21.5], [80.5, 19.5],
+          [77.5, 18.0], [74.5, 16.0], [73.2, 16.0], [72.8, 19.0]
+        ]
+      ]
+    },
+    sources: OFFICIAL_SOURCES.SURVEY_OF_INDIA,
+    updatedAt: '2025-01-01T00:00:00Z'
+  },
   {
     id: 'odisha',
     name: 'Odisha',
@@ -573,6 +882,111 @@ export const SEED_ENTITIES: GeographicEntity[] = [
     description: 'Highest mountain peak in the state of Odisha, located in the Chandragiri-Pottangi sub-range of the Eastern Ghats. Features bauxite-capped plateaus, rich endemic montane flora, and rolling mist-clad valleys.',
     geometryType: 'Point',
     sources: OFFICIAL_SOURCES.SURVEY_OF_INDIA,
+    updatedAt: '2025-01-01T00:00:00Z'
+  },
+  {
+    id: 'mount_everest',
+    name: 'Mount Everest (Sagarmatha / Chomolungma)',
+    nativeName: 'सगरमाथा (Sagarmāthā) / ཇོ་མོ་གླང་མ',
+    type: 'mountain',
+    parentId: 'asia',
+    parentName: 'Himalayas, Asia',
+    coordinates: [27.9881, 86.9250],
+    elevationM: 8848.86,
+    description: 'Earth\'s highest mountain above sea level, located in the Mahalangur Himal sub-range of the Himalayas. Global apex of high-altitude glacial geology and mountaineering.',
+    geometryType: 'Point',
+    sources: OFFICIAL_SOURCES.USGS,
+    updatedAt: '2025-01-01T00:00:00Z'
+  },
+  {
+    id: 'mount_fuji',
+    name: 'Mount Fuji',
+    nativeName: '富士山 (Fuji-san)',
+    type: 'volcano',
+    parentId: 'japan',
+    parentName: 'Honshu, Japan',
+    coordinates: [35.3606, 138.7274],
+    elevationM: 3776.24,
+    description: 'Active stratovolcano that erupted in 1707–1708, celebrated as one of Japan\'s "Three Holy Mountains" (Sanreizan) and a UNESCO World Heritage cultural and geographic landmark.',
+    geometryType: 'Point',
+    sources: OFFICIAL_SOURCES.USGS,
+    updatedAt: '2025-01-01T00:00:00Z'
+  },
+  {
+    id: 'amazon_river',
+    name: 'Amazon River',
+    nativeName: 'Río Amazonas / Rio Amazonas',
+    type: 'river',
+    parentId: 'south_america',
+    parentName: 'South America',
+    coordinates: [-3.4653, -62.2159],
+    areaKm2: 7050000,
+    description: 'World\'s largest river by discharge volume of water, greater than the next seven largest independent rivers combined. Sustains the vast Amazonian tropical rainforest.',
+    geometryType: 'LineString',
+    geojson: {
+      type: 'LineString',
+      coordinates: [
+        [-73.5, -4.5], [-68.0, -3.8], [-60.0, -3.1], [-54.0, -1.9], [-50.0, 0.0]
+      ]
+    },
+    sources: OFFICIAL_SOURCES.USGS,
+    updatedAt: '2025-01-01T00:00:00Z'
+  },
+  {
+    id: 'nile_river',
+    name: 'Nile River',
+    nativeName: 'نهر النيل (Nahr an-Nīl)',
+    type: 'river',
+    parentId: 'africa',
+    parentName: 'Northeastern Africa',
+    coordinates: [18.5000, 31.8000],
+    areaKm2: 3254555,
+    description: 'Major north-flowing river in northeastern Africa flowing 6,650 km into the Mediterranean Sea. The primary water source and civilization lifeline of Egypt and Sudan.',
+    geometryType: 'LineString',
+    geojson: {
+      type: 'LineString',
+      coordinates: [
+        [31.7, -2.5], [32.5, 5.0], [32.5, 15.5], [31.8, 19.5], [32.9, 24.0], [31.2, 30.1], [31.4, 31.5]
+      ]
+    },
+    sources: OFFICIAL_SOURCES.USGS,
+    updatedAt: '2025-01-01T00:00:00Z'
+  },
+  {
+    id: 'great_barrier_reef',
+    name: 'Great Barrier Reef',
+    nativeName: 'Great Barrier Reef',
+    type: 'sea',
+    parentId: 'australia',
+    parentName: 'Coral Sea, Australia',
+    coordinates: [-18.2871, 147.6992],
+    areaKm2: 344400,
+    description: 'World\'s largest coral reef system composed of over 2,900 individual reefs and 900 islands, stretching over 2,300 kilometres off the coast of Queensland.',
+    geometryType: 'Point',
+    sources: OFFICIAL_SOURCES.UNESCO,
+    updatedAt: '2025-01-01T00:00:00Z'
+  },
+  {
+    id: 'sahara_desert',
+    name: 'Sahara Desert',
+    nativeName: 'الصحراء الكبرى (aṣ-Ṣaḥrāʼ al-Kubrā)',
+    type: 'desert',
+    parentId: 'africa',
+    parentName: 'Northern Africa',
+    coordinates: [23.4162, 12.5621],
+    areaKm2: 9200000,
+    description: 'Largest hot desert in the world and third largest desert overall after Antarctica and the Arctic. Covers most of North Africa with hyper-arid ergs, hamadas, and regs.',
+    geometryType: 'Polygon',
+    geojson: {
+      type: 'Polygon',
+      coordinates: [
+        [
+          [-14.0, 20.0], [-10.0, 30.0], [10.0, 32.0], [30.0, 30.0],
+          [35.0, 22.0], [25.0, 16.0], [0.0, 16.0], [-14.0, 20.0]
+        ]
+      ]
+    },
+    sources: OFFICIAL_SOURCES.USGS,
     updatedAt: '2025-01-01T00:00:00Z'
   }
 ];

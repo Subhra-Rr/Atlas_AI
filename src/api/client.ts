@@ -115,6 +115,15 @@ class ApiClient {
     return this.request<GeographicEntity[]>(`/geo/search?q=${encodeURIComponent(query)}`);
   }
 
+  async getSurrounding(params: { entityId?: string; lat?: number; lng?: number; radiusKm?: number }): Promise<GeographicEntity[]> {
+    const q = new URLSearchParams();
+    if (params.entityId) q.set('entityId', params.entityId);
+    if (params.lat !== undefined) q.set('lat', String(params.lat));
+    if (params.lng !== undefined) q.set('lng', String(params.lng));
+    if (params.radiusKm !== undefined) q.set('radiusKm', String(params.radiusKm));
+    return this.request<GeographicEntity[]>(`/geo/surrounding?${q.toString()}`);
+  }
+
   async toggleFollow(entityId: string): Promise<string[]> {
     const res = await this.request<{ followedEntities: string[] }>(`/geo/entities/${entityId}/follow`, { method: 'POST' });
     return res.followedEntities;

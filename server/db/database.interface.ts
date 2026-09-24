@@ -30,6 +30,7 @@ export interface DatabaseAdapter {
   createEntity(entity: GeographicEntity): Promise<GeographicEntity>;
   updateEntity(id: string, updates: Partial<GeographicEntity>): Promise<GeographicEntity | null>;
   searchEntities(term: string): Promise<GeographicEntity[]>;
+  getSurroundingEntities(params: { lat: number; lng: number; radiusKm?: number; excludeId?: string; entityType?: string }): Promise<GeographicEntity[]>;
 
   // Domain Data
   getWeather(entityId: string): Promise<WeatherData | null>;

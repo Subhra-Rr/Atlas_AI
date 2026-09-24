@@ -5,7 +5,11 @@ CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 CREATE EXTENSION IF NOT EXISTS "postgis";
 
 -- 1. Users and RBAC
-CREATE TYPE user_role AS ENUM ('PUBLIC_USER', 'VERIFIED_CONTRIBUTOR', 'REVIEWER', 'ADMIN', 'SUPER_ADMIN');
+DO $$ BEGIN
+    CREATE TYPE user_role AS ENUM ('PUBLIC_USER', 'VERIFIED_CONTRIBUTOR', 'REVIEWER', 'ADMIN', 'SUPER_ADMIN');
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
 
 CREATE TABLE IF NOT EXISTS users (
     id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
@@ -36,28 +40,36 @@ CREATE TABLE IF NOT EXISTS user_followed_entities (
 );
 
 -- 2. Provenance Sources & Datasets
-CREATE TYPE source_type AS ENUM (
-    'AUTHORITATIVE_OFFICIAL',
-    'RECOGNIZED_SCIENTIFIC',
-    'RESEARCH_INSTITUTION',
-    'ESTABLISHED_DATASET',
-    'COMMUNITY_CONTRIBUTION',
-    'UNVERIFIED'
-);
+DO $$ BEGIN
+    CREATE TYPE source_type AS ENUM (
+        'AUTHORITATIVE_OFFICIAL',
+        'RECOGNIZED_SCIENTIFIC',
+        'RESEARCH_INSTITUTION',
+        'ESTABLISHED_DATASET',
+        'COMMUNITY_CONTRIBUTION',
+        'UNVERIFIED'
+    );
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
 
-CREATE TYPE data_status AS ENUM (
-    'LIVE',
-    'CACHED',
-    'HISTORICAL',
-    'ESTIMATED',
-    'SAMPLE',
-    'VERIFIED',
-    'UNVERIFIED',
-    'UNDER_REVIEW',
-    'OUTDATED',
-    'SOURCE_CONFLICT',
-    'ARCHIVED'
-);
+DO $$ BEGIN
+    CREATE TYPE data_status AS ENUM (
+        'LIVE',
+        'CACHED',
+        'HISTORICAL',
+        'ESTIMATED',
+        'SAMPLE',
+        'VERIFIED',
+        'UNVERIFIED',
+        'UNDER_REVIEW',
+        'OUTDATED',
+        'SOURCE_CONFLICT',
+        'ARCHIVED'
+    );
+EXCEPTION
+    WHEN duplicate_object THEN null;
+END $$;
 
 CREATE TABLE IF NOT EXISTS sources (
     id VARCHAR(100) PRIMARY KEY,

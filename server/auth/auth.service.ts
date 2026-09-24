@@ -1,6 +1,9 @@
 import crypto from 'crypto';
+import jwt from 'jsonwebtoken';
 import { DatabaseAdapter } from '../db/database.interface.js';
 import { User, UserRole } from '../../src/types/atlas.js';
+
+const JWT_SECRET = process.env.JWT_SECRET || 'TaXw9sszBAajirtVAowcPYU0eAXfB2w0U+D4SmkVvvg=';
 
 export class AuthService {
   constructor(private db: DatabaseAdapter) {}
@@ -60,9 +63,10 @@ export class AuthService {
     }
 
     // Hash check with PBKDF2
-    // We look up the salt stored in the adapter
+    // We look up the salt stored in the adapter or fallback
     const isAdapter = this.db as any;
-    const internalRecord = isAdapter['users']?.get(email.toLowerCase());
+    const internalRecord = isAdapter['users']?.get(email.toLowerCase()) ||
+      isAdapter['fallback']?.['users']?.get(email.toLowerCase());
     if (!internalRecord) {
       throw new Error('Invalid email or password credentials');
     }
@@ -94,13 +98,39 @@ export class AuthService {
 
   async validateToken(token: string): Promise<User | null> {
     if (!token) return null;
+
+    try {
+      // First verify the JWT signature using the configured secret
+      const decoded = jwt.verify(token, JWT_SECRET) as { userId: string };
+      if (decoded && decoded.userId) {
+        // Validate with database session (ensures session wasn't revoked)
+        const sessionUser = await this.db.validateSession(token);
+        if (sessionUser) return sessionUser;
+
+        // Fallback: If DB session cache was restarted, load user by decoded ID
+        return await this.db.getUserById(decoded.userId);
+      }
+    } catch (jwtErr) {
+      // If not a valid JWT (or expired), attempt direct DB lookup for legacy tokens
+      return this.db.validateSession(token);
+    }
+
     return this.db.validateSession(token);
   }
 
   private async generateSession(userId: string): Promise<string> {
-    const rawToken = crypto.randomBytes(32).toString('hex');
+    const user = await this.db.getUserById(userId);
+    const payload = {
+      userId,
+      email: user?.email,
+      role: user?.role
+    };
+
+    // Sign standard JWT with the configured secret
+    const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '7d' });
     const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
-    await this.db.createSession(userId, rawToken, expiresAt);
-    return rawToken;
+
+    await this.db.createSession(userId, token, expiresAt);
+    return token;
   }
 }

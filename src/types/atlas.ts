@@ -41,6 +41,8 @@ export type GeographicEntityType =
   | 'province'
   | 'district'
   | 'city'
+  | 'town'
+  | 'village'
   | 'river'
   | 'mountain'
   | 'mountain_range'
@@ -74,7 +76,44 @@ export type MapLayerType =
   | 'INFRASTRUCTURE'
   | 'ENVIRONMENT'
   | 'HAZARDS'
-  | 'HISTORICAL';
+  | 'HISTORICAL'
+  | 'TRANSIT'
+  | 'TRAFFIC'
+  | 'BICYCLING'
+  | 'BUILDINGS'
+  | 'STREETVIEW'
+  | 'WILDFIRES'
+  | 'AIRQUALITY';
+
+export type AtlasBaseMapMode = 
+  | 'default'
+  | 'satellite'
+  | 'terrain'
+  | 'street'
+  | 'political'
+  | 'natural'
+  | 'economical';
+
+export type PrimaryMapType = 'PHYSICAL' | 'POLITICAL' | 'ECONOMICAL';
+
+export type SecondaryLayerType = 
+  | 'SATELLITE'
+  | 'STREET'
+  | 'TERRAIN'
+  | 'TRAFFIC'
+  | 'WILDFIRES'
+  | 'AIRQUALITY';
+
+export interface SavedMapConfig {
+  id: string;
+  name: string;
+  primaryMap: PrimaryMapType;
+  secondaryLayers: SecondaryLayerType[];
+  layerOpacity: Record<string, number>;
+  zoom: number;
+  center: [number, number];
+  savedAt: string;
+}
 
 export interface SourceMetadata {
   sourceId: string;
@@ -109,6 +148,8 @@ export interface GeographicEntity {
   elevationM?: number;
   population?: number;
   capital?: string;
+  distanceKm?: number;
+  bearing?: string;
   description: string;
   geometryType?: 'Point' | 'Polygon' | 'MultiPolygon' | 'LineString';
   geojson?: any;

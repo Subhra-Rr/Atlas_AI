@@ -42,6 +42,7 @@ interface EntityDrawerProps {
   user: User | null;
   onToggleFollow?: (entityId: string) => void;
   isFollowed?: boolean;
+  onSelectEntity?: (entityId: string) => void;
 }
 
 export const EntityDrawer: React.FC<EntityDrawerProps> = ({
@@ -49,7 +50,8 @@ export const EntityDrawer: React.FC<EntityDrawerProps> = ({
   onClose,
   user,
   onToggleFollow,
-  isFollowed = false
+  isFollowed = false,
+  onSelectEntity
 }) => {
   const [entity, setEntity] = useState<GeographicEntity | null>(null);
   const [activeTab, setActiveTab] = useState<string>('overview');
@@ -68,10 +70,12 @@ export const EntityDrawer: React.FC<EntityDrawerProps> = ({
   const [culture, setCulture] = useState<CultureData | null>(null);
   const [hazards, setHazards] = useState<NaturalHazard[]>([]);
   const [historical, setHistorical] = useState<HistoricalRecord[]>([]);
+  const [surroundingPlaces, setSurroundingPlaces] = useState<GeographicEntity[]>([]);
 
   useEffect(() => {
     if (!entityId) {
       setEntity(null);
+      setSurroundingPlaces([]);
       return;
     }
 
@@ -81,8 +85,8 @@ export const EntityDrawer: React.FC<EntityDrawerProps> = ({
         const ent = await api.getEntity(entityId);
         setEntity(ent);
 
-        // Fetch domain datasets concurrently
-        const [w, c, r, a, e, com, p, cul, h, hist] = await Promise.allSettled([
+        // Fetch surrounding places and domain datasets concurrently
+        const [w, c, r, a, e, com, p, cul, h, hist, surr] = await Promise.allSettled([
           api.getWeather(entityId),
           api.getClimate(entityId),
           api.getRainfall(entityId),
@@ -92,7 +96,8 @@ export const EntityDrawer: React.FC<EntityDrawerProps> = ({
           api.getPopulation(entityId),
           api.getCulture(entityId),
           api.getHazards(entityId),
-          api.getHistorical(entityId)
+          api.getHistorical(entityId),
+          ent?.coordinates ? api.getSurrounding({ entityId, lat: ent.coordinates[0], lng: ent.coordinates[1], radiusKm: 250 }) : Promise.resolve([])
         ]);
 
         if (w.status === 'fulfilled') setWeather(w.value);
@@ -105,6 +110,7 @@ export const EntityDrawer: React.FC<EntityDrawerProps> = ({
         if (cul.status === 'fulfilled') setCulture(cul.value);
         if (h.status === 'fulfilled') setHazards(h.value);
         if (hist.status === 'fulfilled') setHistorical(hist.value);
+        if (surr.status === 'fulfilled' && Array.isArray(surr.value)) setSurroundingPlaces(surr.value);
       } catch (err) {
         console.error('Failed to load entity details:', err);
       } finally {
@@ -128,7 +134,29 @@ export const EntityDrawer: React.FC<EntityDrawerProps> = ({
     }
   };
 
-  if (!entityId || !entity) return null;
+  const [copiedShare, setCopiedShare] = useState(false);
+
+  const handleShare = async () => {
+    if (!entity) return;
+    try {
+      const shareData = {
+        title: `${entity.name} | ATLASAI World Atlas`,
+        text: `Explore ${entity.name} (${entity.type}) on ATLASAI verified cartography platform.`,
+        url: window.location.href
+      };
+      if (navigator.share) {
+        await navigator.share(shareData);
+      } else {
+        await navigator.clipboard.writeText(`${window.location.origin}?entity=${entity.id}`);
+        setCopiedShare(true);
+        setTimeout(() => setCopiedShare(false), 2200);
+      }
+    } catch {
+      // User cancelled or clipboard fallback
+    }
+  };
+
+  if (!entityId) return null;
 
   const tabs = [
     { id: 'overview', label: 'Overview', icon: MapPin },
@@ -144,85 +172,130 @@ export const EntityDrawer: React.FC<EntityDrawerProps> = ({
 
   return (
     <>
-      <div className="fixed inset-y-0 right-0 z-30 w-full sm:w-[500px] lg:w-[580px] bg-slate-900/98 backdrop-blur-xl border-l border-slate-800 shadow-2xl flex flex-col overflow-hidden transition-all duration-300">
-        {/* Drawer Header */}
-        <div className="px-6 py-4 border-b border-slate-800 bg-slate-950/80">
-          <div className="flex items-start justify-between gap-3">
-            <div>
-              <div className="flex items-center gap-2">
-                <h2 className="text-xl font-serif font-bold text-slate-100 tracking-wide">
-                  {entity.name}
-                </h2>
-                {entity.nativeName && (
-                  <span className="text-sm font-sans text-slate-400">
-                    ({entity.nativeName})
-                  </span>
-                )}
-              </div>
-              <div className="flex items-center gap-2 mt-1">
-                <span className="text-xs font-mono uppercase text-amber-400 font-semibold">
-                  {entity.type}
-                </span>
-                {entity.parentName && (
-                  <>
+      {/* Mobile Backdrop */}
+      <div
+        onClick={onClose}
+        className="fixed inset-0 bg-black/70 backdrop-blur-sm z-[2000] map-floating-overlay md:hidden animate-fade-in"
+      />
+
+      <div className="fixed inset-y-0 right-0 z-[2000] map-floating-overlay w-full sm:w-[500px] lg:w-[580px] bg-slate-900/98 backdrop-blur-xl border-l border-slate-800 shadow-2xl flex flex-col overflow-hidden transition-all duration-300">
+        {loading && !entity ? (
+          <div className="flex-1 flex flex-col items-center justify-center p-8 space-y-4">
+            <div className="w-10 h-10 border-3 border-amber-500/30 border-t-amber-500 rounded-full animate-spin" />
+            <div className="text-center">
+              <h3 className="text-sm font-semibold text-slate-200">Loading Geographic Intelligence...</h3>
+              <p className="text-xs text-slate-400 mt-1">Retrieving verified cartographic & domain datasets</p>
+            </div>
+          </div>
+        ) : !entity ? (
+          <div className="flex-1 flex flex-col items-center justify-center p-8 text-center space-y-3">
+            <AlertCircle className="w-8 h-8 text-rose-400" />
+            <div className="text-sm text-slate-300">Entity details could not be retrieved.</div>
+            <button
+              onClick={onClose}
+              className="px-4 py-1.5 text-xs bg-slate-800 text-slate-200 rounded-lg hover:bg-slate-700"
+            >
+              Close
+            </button>
+          </div>
+        ) : (
+          <>
+            {/* Drawer Header */}
+            <div className="px-5 sm:px-6 py-4 border-b border-slate-800 bg-slate-950/90">
+              <div className="flex items-start justify-between gap-3">
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2 flex-wrap">
+                    <h2 className="text-lg sm:text-xl font-serif font-bold text-slate-100 tracking-wide truncate">
+                      {entity.name}
+                    </h2>
+                    {entity.nativeName && (
+                      <span className="text-sm font-sans text-amber-400/90 truncate">
+                        ({entity.nativeName})
+                      </span>
+                    )}
+                  </div>
+                  <div className="flex items-center gap-2 mt-1.5 flex-wrap">
+                    <span className="text-[10px] font-mono uppercase text-amber-400 font-bold px-1.5 py-0.5 bg-amber-950/60 border border-amber-800/80 rounded">
+                      {entity.type}
+                    </span>
+                    {entity.parentName && (
+                      <>
+                        <span className="text-slate-600">·</span>
+                        <span className="text-xs text-slate-400 truncate">{entity.parentName}</span>
+                      </>
+                    )}
                     <span className="text-slate-600">·</span>
-                    <span className="text-xs text-slate-400">{entity.parentName}</span>
-                  </>
-                )}
-                <span className="text-slate-600">·</span>
-                <TrustIndicator
-                  status={entity.sources.verificationStatus}
-                  verifiedAt={entity.sources.verifiedAt}
-                />
+                    <TrustIndicator
+                      status={entity.sources.verificationStatus}
+                      verifiedAt={entity.sources.verifiedAt}
+                    />
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-1 shrink-0">
+                  {/* Share button */}
+                  <button
+                    onClick={handleShare}
+                    title="Share Geographic Entity Link"
+                    className="p-2 rounded-lg text-slate-400 hover:text-slate-100 hover:bg-slate-800 transition-colors relative"
+                    aria-label="Share entity"
+                  >
+                    <Share2 className="w-4 h-4" />
+                    {copiedShare && (
+                      <span className="absolute -bottom-7 right-0 whitespace-nowrap bg-amber-500 text-slate-950 font-bold text-[10px] px-2 py-0.5 rounded shadow">
+                        Copied!
+                      </span>
+                    )}
+                  </button>
+
+                  {onToggleFollow && (
+                    <button
+                      onClick={() => onToggleFollow(entity.id)}
+                      title={isFollowed ? 'Unfollow Location' : 'Follow Location Updates'}
+                      className={`p-2 rounded-lg transition-colors ${
+                        isFollowed ? 'text-amber-400 bg-amber-950/50 border border-amber-800' : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800'
+                      }`}
+                      aria-label="Bookmark entity"
+                    >
+                      <Bookmark className="w-4 h-4" />
+                    </button>
+                  )}
+
+                  <button
+                    onClick={onClose}
+                    className="p-2 rounded-lg text-slate-400 hover:text-slate-100 hover:bg-slate-800 transition-colors"
+                    aria-label="Close details"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+              </div>
+
+              {/* Tab Navigation */}
+              <div className="flex items-center gap-1.5 overflow-x-auto pt-3.5 no-scrollbar border-t border-slate-800/70 mt-3.5">
+                {tabs.map((tab) => {
+                  const Icon = tab.icon;
+                  const isActive = activeTab === tab.id;
+                  return (
+                    <button
+                      key={tab.id}
+                      onClick={() => setActiveTab(tab.id)}
+                      className={`flex items-center gap-1.5 px-3 py-2 text-xs font-medium rounded-lg whitespace-nowrap transition-colors touch-manipulation min-h-[38px] ${
+                        isActive
+                          ? 'bg-amber-500/15 text-amber-300 border border-amber-500/40 font-semibold shadow-sm'
+                          : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/60'
+                      }`}
+                    >
+                      <Icon className="w-3.5 h-3.5" />
+                      <span>{tab.label}</span>
+                    </button>
+                  );
+                })}
               </div>
             </div>
 
-            <div className="flex items-center gap-1">
-              {onToggleFollow && (
-                <button
-                  onClick={() => onToggleFollow(entity.id)}
-                  title={isFollowed ? 'Unfollow Location' : 'Follow Location Updates'}
-                  className={`p-1.5 rounded transition-colors ${
-                    isFollowed ? 'text-amber-400 bg-amber-950/50 border border-amber-800' : 'text-slate-400 hover:text-slate-100 hover:bg-slate-800'
-                  }`}
-                >
-                  <Bookmark className="w-4 h-4" />
-                </button>
-              )}
-              <button
-                onClick={onClose}
-                className="p-1.5 rounded text-slate-400 hover:text-slate-100 hover:bg-slate-800 transition-colors"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
-          </div>
-
-          {/* Tab Navigation */}
-          <div className="flex items-center gap-1 overflow-x-auto pt-4 no-scrollbar border-t border-slate-800/60 mt-3">
-            {tabs.map((tab) => {
-              const Icon = tab.icon;
-              const isActive = activeTab === tab.id;
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium rounded whitespace-nowrap transition-colors ${
-                    isActive
-                      ? 'bg-slate-800 text-amber-300 font-semibold shadow-sm'
-                      : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40'
-                  }`}
-                >
-                  <Icon className="w-3.5 h-3.5" />
-                  <span>{tab.label}</span>
-                </button>
-              );
-            })}
-          </div>
-        </div>
-
-        {/* Drawer Body */}
-        <div className="flex-1 overflow-y-auto p-6 space-y-6">
+            {/* Drawer Body */}
+            <div className="flex-1 overflow-y-auto p-6 space-y-6">
           {/* TAB 1: OVERVIEW */}
           {activeTab === 'overview' && (
             <div className="space-y-5">
@@ -272,6 +345,47 @@ export const EntityDrawer: React.FC<EntityDrawerProps> = ({
                   </div>
                 )}
               </div>
+
+              {/* Surrounding Places & Adjacent Areas in this Region */}
+              {surroundingPlaces.length > 0 && (
+                <div className="pt-2">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="text-[11px] font-mono uppercase text-slate-400 font-bold flex items-center gap-1.5">
+                      <MapPin className="w-3.5 h-3.5 text-amber-400" />
+                      <span>Surrounding Areas ({surroundingPlaces.length})</span>
+                    </div>
+                    <span className="text-[10px] text-slate-500 font-mono">In this vicinity</span>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 max-h-56 overflow-y-auto pr-1">
+                    {surroundingPlaces.slice(0, 10).map((place) => (
+                      <button
+                        key={place.id}
+                        onClick={() => {
+                          if (onSelectEntity) {
+                            onSelectEntity(place.id);
+                          }
+                        }}
+                        className="text-left p-2.5 rounded-lg bg-slate-950/70 hover:bg-slate-900 border border-slate-800/80 hover:border-amber-500/50 transition-all flex flex-col group"
+                      >
+                        <div className="flex items-center justify-between w-full">
+                          <span className="text-xs font-semibold text-slate-200 group-hover:text-amber-300 transition-colors truncate">
+                            {place.name}
+                          </span>
+                          <span className="text-[9px] font-mono uppercase tracking-wider text-slate-400 bg-slate-800 px-1.5 py-0.5 rounded">
+                            {place.type}
+                          </span>
+                        </div>
+                        {place.parentName && (
+                          <div className="text-[10px] text-slate-400 truncate mt-0.5">
+                            {place.parentName}
+                          </div>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               {/* Source Provenance Box */}
               <div className="pt-2">
@@ -756,15 +870,19 @@ export const EntityDrawer: React.FC<EntityDrawerProps> = ({
             Atlas ID: {entity.id}
           </span>
         </div>
+        </>
+        )}
       </div>
 
       {/* Submit Correction Modal */}
-      <SubmitCorrectionModal
-        isOpen={isCorrectionModalOpen}
-        onClose={() => setIsCorrectionModalOpen(false)}
-        entity={entity}
-        user={user}
-      />
+      {entity && (
+        <SubmitCorrectionModal
+          isOpen={isCorrectionModalOpen}
+          onClose={() => setIsCorrectionModalOpen(false)}
+          entity={entity}
+          user={user}
+        />
+      )}
     </>
   );
 };

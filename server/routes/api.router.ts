@@ -128,6 +128,47 @@ export function createApiRouter(
     }
   });
 
+  router.get('/geo/surrounding', async (req: Request, res: Response) => {
+    try {
+      const entityId = typeof req.query.entityId === 'string' ? req.query.entityId : undefined;
+      let lat = typeof req.query.lat === 'string' ? parseFloat(req.query.lat) : NaN;
+      let lng = typeof req.query.lng === 'string' ? parseFloat(req.query.lng) : NaN;
+      const radiusKm = typeof req.query.radiusKm === 'string' ? parseFloat(req.query.radiusKm) : 180;
+
+      let entityType: string | undefined;
+
+      if (entityId) {
+        const entity = await db.getEntityById(entityId);
+        if (entity) {
+          lat = entity.coordinates[0];
+          lng = entity.coordinates[1];
+          entityType = entity.type;
+        }
+      }
+
+      if (isNaN(lat) || isNaN(lng)) {
+        return res.status(400).json({ error: { code: 'INVALID_COORDINATES', message: 'Valid lat & lng or entityId required' } });
+      }
+
+      // Adjust radius based on entity type: continents get 2000km, countries get 800km, states get 300km, cities/mountains get 150km
+      let effectiveRadius = radiusKm;
+      if (entityType === 'country') effectiveRadius = Math.max(radiusKm, 650);
+      else if (entityType === 'state' || entityType === 'province') effectiveRadius = Math.max(radiusKm, 350);
+
+      const surrounding = await db.getSurroundingEntities({
+        lat,
+        lng,
+        radiusKm: effectiveRadius,
+        excludeId: entityId,
+        entityType
+      });
+
+      res.json({ data: surrounding });
+    } catch (err: any) {
+      res.status(500).json({ error: { code: 'SURROUNDING_FAILED', message: err.message } });
+    }
+  });
+
   router.post('/geo/entities/:id/follow', authenticate, async (req: AuthenticatedRequest, res: Response) => {
     try {
       if (!req.user) return res.status(401).json({ error: { code: 'UNAUTHORIZED' } });

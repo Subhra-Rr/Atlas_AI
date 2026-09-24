@@ -40,6 +40,72 @@
   background-color: #020617 !important;
 }
 
+/* Stacking Context & Floating UI Controls strictly over Leaflet Map */
+.map-floating-overlay {
+  z-index: 1500 !important;
+  isolation: isolate;
+  transform: translate3d(0, 0, 0);
+  will-change: transform;
+}
+
+/* Leaflet Container Stacking Constraints */
+.leaflet-top,
+.leaflet-bottom {
+  z-index: 800 !important;
+}
+.leaflet-bottom.leaflet-right {
+  z-index: 450 !important;
+}
+.leaflet-bottom.leaflet-left {
+  z-index: 850 !important;
+}
+.leaflet-control-zoom {
+  border: 1px solid rgba(51, 65, 85, 0.8) !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6) !important;
+  border-radius: 10px !important;
+  overflow: hidden;
+  margin-bottom: 24px !important;
+  margin-left: 16px !important;
+}
+.leaflet-control-attribution {
+  background: rgba(2, 6, 23, 0.8) !important;
+  color: #64748b !important;
+  font-size: 9px !important;
+  backdrop-filter: blur(6px) !important;
+  border-top-left-radius: 6px !important;
+  pointer-events: auto !important;
+}
+
+/* Subtle Map Fade-In Animation on Layer Switching */
+.leaflet-tile {
+  transition: opacity 0.38s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.map-layer-transitioning .leaflet-tile-pane {
+  opacity: 0.35;
+  transition: opacity 0.25s ease-out;
+}
+
+.map-layer-settled .leaflet-tile-pane {
+  opacity: 1;
+  transition: opacity 0.4s ease-in;
+}
+
+@keyframes mapFadeInKeyframes {
+  0% {
+    opacity: 0.2;
+    transform: scale(0.998);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+.map-fade-enter {
+  animation: mapFadeInKeyframes 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
 /* Smooth Leaflet Controls */
 .leaflet-bar a {
   background-color: #0f172a !important;
@@ -50,3 +116,338 @@
   background-color: #1e293b !important;
   color: #fbbf24 !important;
 }
+
+/* ==========================================================================
+   Atlas Leaflet Cartographic Dark Theme & Interactive Popups
+   ========================================================================== */
+
+/* Leaflet Popup Container */
+.leaflet-popup.atlas-popup {
+  margin-bottom: 24px;
+}
+
+.leaflet-popup.atlas-popup .leaflet-popup-content-wrapper {
+  background: rgba(10, 15, 29, 0.98) !important;
+  backdrop-filter: blur(16px) !important;
+  -webkit-backdrop-filter: blur(16px) !important;
+  border: 1px solid rgba(245, 158, 11, 0.38) !important;
+  box-shadow: 0 20px 45px -8px rgba(0, 0, 0, 0.9), 0 0 0 1px rgba(255, 255, 255, 0.06), 0 0 24px rgba(245, 158, 11, 0.18) !important;
+  border-radius: 12px !important;
+  padding: 0 !important;
+  color: #f8fafc !important;
+  overflow: hidden;
+}
+
+.leaflet-popup.atlas-popup .leaflet-popup-content {
+  margin: 0 !important;
+  padding: 0 !important;
+  line-height: 1.4 !important;
+  color: #f8fafc !important;
+  min-width: 275px;
+  max-width: 325px;
+}
+
+/* Pointer Tip */
+.leaflet-popup.atlas-popup .leaflet-popup-tip {
+  background: rgba(10, 15, 29, 0.98) !important;
+  border: 1px solid rgba(245, 158, 11, 0.38) !important;
+  box-shadow: 0 10px 15px rgba(0, 0, 0, 0.6) !important;
+}
+
+/* Custom Popup Close Button */
+.leaflet-popup.atlas-popup a.leaflet-popup-close-button {
+  top: 10px !important;
+  right: 10px !important;
+  width: 26px !important;
+  height: 26px !important;
+  padding: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  color: #94a3b8 !important;
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  background: rgba(30, 41, 59, 0.8) !important;
+  border: 1px solid rgba(71, 85, 105, 0.6) !important;
+  border-radius: 7px !important;
+  transition: all 0.15s ease !important;
+  text-decoration: none !important;
+  z-index: 20;
+}
+
+.leaflet-popup.atlas-popup a.leaflet-popup-close-button:hover {
+  color: #ffffff !important;
+  background: rgba(225, 29, 72, 0.9) !important;
+  border-color: #f43f5e !important;
+  transform: scale(1.05);
+}
+
+/* Card Inner Layout - CSS selector: .atlas-popup-card */
+.atlas-popup-card {
+  position: relative;
+  padding: 16px 18px 14px 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  color: #f8fafc;
+}
+
+.atlas-popup-accent-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #f59e0b 0%, #fbbf24 50%, #06b6d4 100%);
+}
+
+.atlas-popup-header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding-right: 24px;
+}
+
+.atlas-popup-taxonomy {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-bottom: 2px;
+}
+
+.atlas-popup-type {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 9px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 2.5px 6.5px;
+  background: rgba(245, 158, 11, 0.16);
+  color: #fbbf24;
+  border: 1px solid rgba(245, 158, 11, 0.38);
+  border-radius: 4px;
+}
+
+.atlas-popup-parent {
+  font-size: 11px;
+  color: #94a3b8;
+  font-weight: 500;
+}
+
+.atlas-popup-badge-verified {
+  display: inline-flex;
+  align-items: center;
+  gap: 3.5px;
+  font-size: 9px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #34d399;
+  background: rgba(16, 185, 129, 0.12);
+  border: 1px solid rgba(16, 185, 129, 0.35);
+  padding: 1.5px 5.5px;
+  border-radius: 4px;
+  margin-left: auto;
+}
+
+.atlas-badge-icon {
+  width: 10px;
+  height: 10px;
+}
+
+.atlas-popup-title-wrap {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.atlas-popup-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 700;
+  color: #ffffff;
+  letter-spacing: -0.015em;
+  line-height: 1.25;
+}
+
+.atlas-popup-native {
+  font-size: 12px;
+  color: #fde68a;
+  font-weight: 500;
+  opacity: 0.95;
+}
+
+/* Quick-Stats Grid */
+.atlas-popup-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(75px, 1fr));
+  gap: 6px;
+  margin: 2px 0;
+  padding: 4px;
+  background: rgba(2, 6, 23, 0.45);
+  border-radius: 8px;
+  box-shadow: inset 0 2px 6px rgba(0, 0, 0, 0.45);
+}
+
+.atlas-popup-stat-item {
+  background: rgba(15, 23, 42, 0.75);
+  border: 1px solid rgba(51, 65, 85, 0.55);
+  border-radius: 6px;
+  padding: 5px 8px;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5px;
+  box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.25);
+}
+
+.atlas-stat-label {
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: 8.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: #64748b;
+  font-weight: 600;
+}
+
+.atlas-stat-value {
+  font-size: 11px;
+  font-weight: 600;
+  color: #e2e8f0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.atlas-stat-coords {
+  font-family: ui-monospace, SFMono-Regular, monospace;
+  font-size: 10px;
+  color: #38bdf8;
+}
+
+.atlas-popup-desc {
+  font-size: 12px;
+  line-height: 1.6;
+  color: #cbd5e1;
+  margin: 0;
+  font-weight: 400;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.atlas-popup-footer {
+  margin-top: 3px;
+  padding-top: 9px;
+  border-top: 1px solid rgba(51, 65, 85, 0.45);
+}
+
+/* Explore in Atlas Touch-Friendly Interactive Button - CSS selector: .atlas-popup-btn */
+.atlas-popup-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 42px;
+  padding: 10px 16px;
+  background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+  color: #020617 !important;
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(245, 158, 11, 0.4);
+  transform: scale(1);
+  transition: transform 0.24s cubic-bezier(0.34, 1.56, 0.64, 1), background 0.2s ease, box-shadow 0.24s ease, color 0.15s ease;
+  will-change: transform;
+  user-select: none;
+  -webkit-tap-highlight-color: transparent;
+  touch-action: manipulation;
+}
+
+.atlas-popup-btn:hover {
+  background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+  box-shadow: 0 8px 24px rgba(245, 158, 11, 0.6);
+  transform: scale(1.03);
+  color: #000000 !important;
+}
+
+.atlas-popup-btn:active {
+  transform: scale(0.985);
+  box-shadow: 0 2px 8px rgba(217, 119, 6, 0.4);
+}
+
+.atlas-btn-icon {
+  width: 15px;
+  height: 15px;
+  transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.atlas-popup-btn:hover .atlas-btn-icon {
+  transform: translateX(4px);
+}
+
+/* Focal Radar Pulse Halo for Searched Destination */
+@keyframes focal-pulse {
+  0% {
+    transform: scale(0.95);
+    opacity: 0.85;
+  }
+  50% {
+    transform: scale(1.08);
+    opacity: 0.4;
+  }
+  100% {
+    transform: scale(0.95);
+    opacity: 0.85;
+  }
+}
+
+.focal-radar-halo {
+  animation: focal-pulse 3s infinite ease-in-out;
+}
+
+/* Surrounding Place Region Pins on Map */
+.surrounding-region-badge {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  background: rgba(10, 15, 30, 0.94);
+  backdrop-filter: blur(8px);
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-family: 'Plus Jakarta Sans', system-ui, sans-serif;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.6);
+  white-space: nowrap;
+  pointer-events: auto;
+  cursor: pointer;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.surrounding-region-badge:hover {
+  transform: scale(1.08) translateY(-2px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.8);
+}
+
+/* Custom Scrollbar for Floating Control Panel */
+.panel-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+.panel-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.panel-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(100, 116, 139, 0.4);
+  border-radius: 4px;
+}
+.panel-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(245, 158, 11, 0.6);
+}
+
