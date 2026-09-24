@@ -1,0 +1,6 @@
+{
+  "name": "ATLASAI — Automated Living World Atlas",
+  "description": "A continuously updated, source-aware, verification-driven digital world atlas combining interactive geospatial mapping, live weather, climate, agriculture, economic, cultural, and environmental data with provenance, audit logging, and Ask Atlas AI.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
